@@ -1,12 +1,17 @@
-function matrixWithNoIdle = getRidOfIdles(package, NbitsWithStartBit, idle)
+function [matrixWithNoIdle, timeWithNoIdles] = getRidOfIdles(package, packageTime, NbitsWithStartBit, idle)
 % Esta função serve para pegar uma matriz de dados gerada pela função
 % GetPackagesAndTime e filtrar apenas os pacotes, isto é, devolver uma
 % matriz contendo apenas os pacotes com os start bits sem os períodos em
-% idle
+% idle. Dessa forma, esta função deve alterar a matriz que monitora o tempo
+% de início de cada bit;
 
     % Transformamos a matriz package em um vetor  coluna
     packageVector = package';
     packageVector = packageVector(:);
+    
+    % Transforma a matriz packageTime em um vetor coluna
+    timeVector = packageTime';
+    timeVector = timeVector(:);
     
     % Índices que servirão como ferramentas nos loops abaixo
     index = 1; % Índice que vai trabalhar sobre a packageVector (vetor de 
@@ -28,6 +33,7 @@ function matrixWithNoIdle = getRidOfIdles(package, NbitsWithStartBit, idle)
         else
             for i2 = 1:NbitsWithStartBit
                 packageWithNoIdle(output_index) = packageVector(index);
+                timeWithNoIdle(output_index) = timeVector(index);
                 index = index + 1;
                 output_index = output_index + 1;
             end
@@ -38,4 +44,6 @@ function matrixWithNoIdle = getRidOfIdles(package, NbitsWithStartBit, idle)
     % matriz com os pacotes
     matrixWithNoIdle = reshape(packageWithNoIdle,NbitsWithStartBit,floor(size(packageWithNoIdle,2)/NbitsWithStartBit));
     matrixWithNoIdle =  matrixWithNoIdle';
+    timeWithNoIdles = reshape(timeWithNoIdle,NbitsWithStartBit,floor(size(packageWithNoIdle,2)/NbitsWithStartBit));
+    timeWithNoIdles = timeWithNoIdles';
 end
