@@ -24,6 +24,9 @@ function [matrixWithNoIdle, timeWithNoIdles] = getRidOfIdles(package, packageTim
         %Procuramos o startbit, esta parte do software vai cortar os idles 
         while packageVector(index) == idle
             index = index + 1;
+            if size(packageVector,1) - index == 0
+                break
+            end
         end
         
         % Pegamos os pedaços que não contêm os bits idle, apenas os pacotes
