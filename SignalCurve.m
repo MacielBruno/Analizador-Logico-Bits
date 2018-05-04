@@ -1,14 +1,25 @@
-function SignalCurve(Signal, file, strt_cfg)
-Tbit = (1/(4.8e6));
-Nbits = 23;
-idle = 0;
-numberOfCurves = 1;
+function SignalCurve(Signal, file, Nbits, idle, Tbit)
 
-[X,Y] = XandYGenerator(file, Nbits, idle, Tbit);
+% Vai armazenar a quantidade de Curvas que deverão ser plotadas
+numberOfCurves = size(Signal,2);
+
+X = struct;
+Y = struct;
+
+for i = 1:numberOfCurves
+    [X(i).plot,Y(i).plot] = XandYGenerator(Signal(i).channel, Nbits, idle, Tbit);
+end
 %text = getCertainComponents(X, typeOfInput, stringArray);
 
+for i = 1:numberOfCurves
+    Y(i).plot = Y(i).plot + (i-1)*2;
+end
+
 ylim([-1 2]);
-stairs(X, Y);
+for i = 1:numberOfCurves
+    stairs(X(i).plot, Y(i).plot);
+    hold on;
+end
 zoom on;
 
 
@@ -19,25 +30,4 @@ zoom on;
 % stem(X, Y);
 % zoom on;
 
-
 end
-% packagesCurve = figure; % Cria uma janela onde os gráficos serão plotados
-% set(packagesCurve, 'Color', 'w'); % Cor de fundo da janela
-% 
-% % Muda o nome da janela de plotagem
-% set(packagesCurve, 'Name', 'Signal Curve'); 
-% set(packagesCurve, 'NumberTitle', 'off');
-% 
-% % Pega o canal em que iremos trabalhar a partir do file e o tempo que se
-% % inicia cada pacote do canal
-% [workingChannel, packagesTime] = GetPackagesAndTime(file.digital_channel_3, 0, file.digital_sample_rate_hz, 22, 0,  1/(4.8e6), 22);
-% 
-% % Cria uma escala na abscissa, discretizada em Tbit
-% Tbit = 1/(4.8e6);
-% x = linspace(0,packagesTime(end)+Tbit,Tbit);
-% y = workingChannel;
-% plot(x,y);
-% 
-% 
-% end
-% 
