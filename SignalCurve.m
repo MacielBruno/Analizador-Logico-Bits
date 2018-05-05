@@ -16,17 +16,16 @@ for i = 1:numberOfCurves
 end
 
 ylim([-1 2]);
-colors = [ [1 0 0]; [0 1 0]; [0 0 1]; [1 1 0];[1 0 1];[0 1 1];[0 0 0] ];
+colors = [ [1 0 0]; [0 1 0]; [0 0 1]; [1 1 0];[1 0 1];[0 1 1];[0 0 0]];
 index = 0;
 for i = 1:numberOfCurves
-    index = index + 1;
-    if index == size(colors)
-        index = 0;
-    end
     %ylabel(Signal(i).name, 'position', [-0.005 (i-0.5) 0]);
 %     ylabel('Difference', 'position',[x y z])
-
-    stairs(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, 'Color', colors(index,:));
+    if i <= size(colors)
+        stairs(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, 'Color', colors(i,:));
+    else
+        stairs(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, 'Color', rand(1,3));
+    end
     hold on;
     %stairs(X(i).plot, Y(i).plot, 'DisplayName', Signal(i).name);
     
