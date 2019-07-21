@@ -39,6 +39,6 @@ numberOfNonFullPackageBits = size(bitTimeVector,1) - size(workingChannelVector,1
 workingChannelVector = [zeros(numberOfNonFullPackageBits,1);workingChannelVector];
 
 X = [0,bitTimeVector'];
-Y = [0,workingChannelVector'];
+Y = [idle,workingChannelVector'];
 
 end

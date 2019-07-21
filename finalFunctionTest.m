@@ -1,5 +1,6 @@
-function [output, time] = GetPackagesAndTime(channel, initial_bit, sampleRate, N_bits, idle, Tbit, N_bits_idle)
-
+function teste = finalFunctionTest
+% for i = 1:1
+% function Packages = GetPackages( channel, initial_bit, sampleRate, N_bits, idle, Tbit, N_bits_idle)
 
 %%%%%%%%%%%%%%%%%%% DESCRIÇÃO DAS VARIÁVEIS DE ENTRADA %%%%%%%%%%%%%%%%%%%%
 %   channel: Contém os valores de amostragem feitos com o dispositivo;
@@ -19,16 +20,17 @@ function [output, time] = GetPackagesAndTime(channel, initial_bit, sampleRate, N
 %%
 %channel = digital_channel;
 %initial_bit = digital_channel_initial_bitstates(2);
-% initial_bit = 0;
-% sampleRate = digital_sample_rate_hz;
-% N_bits = 22;
-% idle = 0;
+initial_bit = 0;
+digital_sample_rate_hz = 24000000;
+sampleRate = digital_sample_rate_hz;
+N_bits = 22;
+idle = 0;
 sampleTime = 1/sampleRate; % Período de uma amostragem
-% Tbit = 1/(4.8e6);
-% N_bits_idle = 22;
-% N_packages = 10;
-% [digital_channel,packages] = ChannelCreator(N_bits, idle, N_packages, Tbit, sampleTime);
-% channel = digital_channel;
+Tbit = 1/(4.8e6);
+N_bits_idle = 22;
+N_packages = 10;
+[digital_channel,packages] = ChannelCreator(N_bits, idle, N_packages, Tbit, sampleTime);
+channel = digital_channel;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Variáveis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 current_bit = initial_bit; % Mantém o tracking do bit atual
@@ -48,8 +50,6 @@ total_number_of_packages = ceil(total_number_of_bits/N_bits); % Conta a
 % a quantidade de pacotes contidos no canal
 Packages1 = zeros(total_number_of_packages,N_bits);% Inicializa
 % a variável de saída como uma matriz de zeros
-time_index = 1; % Marco o tempo de início de cada pacote
-bitTimeIndex = 1; % Marca o  tempo de início de um bit único
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%
@@ -65,10 +65,6 @@ while(keep_seeking)
         index = (index + 2);
     end
 end
-time(time_index) = sum(channel(1:index))*sampleTime;
-% bitTime(bitTimeIndex) = time(time_index);
-time_index = time_index + 1;
-% bitTimeIndex = bitTimeIndex + 1;
 %%
 
 %%%%%%%%%%%%% Parte 2: Pegar os bits e colocá-los nos arrays %%%%%%%%%%%%%%
@@ -88,7 +84,7 @@ on_first_half_bit = 1; % Indica se está a procura do primeiro bit ou não,
 % metade de um bit, na primeira medição deve ser olhado até o equivalente
 % a meio bit em amostras.
 
-for channel_index = initial_part2_index:size(channel,1)
+for channel_index = initial_part2_index:size(channel,2)
     % Vai verificar se no primeiro elemento do channel há a metade de um
     % bit, se houver, coloca o valor do current_value no vetor de saída, e
     % então retira a quantitade de amostras da metade de um bit do channel
@@ -112,10 +108,6 @@ for channel_index = initial_part2_index:size(channel,1)
         on_first_half_bit = 0; % Sinaliza que encontrou a metade de um bit
         output_vector(output_index) = current_bit; % Coloca o valor do bit no vetor de saída
         output_index = output_index + 1; % Incrementa o índice do vetor de saída
-        
-%         bitTime(bitTimeIndex) = Tbit/2 + bitTime(bitTimeIndex - 1); % Como
-        % a contagem do bit inicial vai somente até a metade de um
-%         bitTimeIndex = bitTimeIndex + 1;
         channel(channel_index)=channel(channel_index)-half_bit_sample_counter;%Retiro a quantidade de meio bit do elemento atual
         quociente = ((channel(channel_index))/((half_bit_sample_counter*(1 + (~on_first_half_bit)))));%Mede a quantidade de bits inteitos contidos no elemento do canal
         resto = (rem(channel(channel_index), (half_bit_sample_counter*(1 + (~on_first_half_bit)))));%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -132,15 +124,7 @@ for channel_index = initial_part2_index:size(channel,1)
     if on_first_half_bit == 0 % Se ele já encontrou o primeiro meio bit
         for i = 1:quociente   % Cada bit encontrado no channel(index)
             % vai ser colocado no output_vector
-                        
-            if rem(output_index, N_bits) == 0
-                time(time_index) = N_bits*Tbit + time(time_index-1);
-                time_index = time_index + 1;
-            end
-            
             output_vector(output_index) = current_bit;
-%             bitTime(bitTimeIndex) = Tbit + bitTime(bitTimeIndex-1);
-%             bitTimeIndex = bitTimeIndex + 1;
             output_index = output_index + 1;
         end
         % O restante das amostras encontradas no elemento atual vai ser
@@ -148,17 +132,50 @@ for channel_index = initial_part2_index:size(channel,1)
         if channel_index ~= size(channel)
             channel(channel_index+1) = channel(channel_index+1) + resto;
         end
-    end
+        end
     current_bit = ~current_bit;
 end
 
-final_output_vector = output_vector;
-N_lines = floor(size(final_output_vector, 2)/N_bits);
-output_vector = output_vector(:, 1:N_lines*N_bits);
-output = reshape(output_vector, [N_bits,N_lines]);
-%  %output = reshape(final_output_vector,[22,19]);
-output = output';
-% output = [zeros(1,N_bits); output];
-%  teste = isequal(packages(2:end,:), output);
+ final_output_vector = output_vector;
+% % output = reshape(output_vector, [N_bits,N_packages]);
+ output = reshape(final_output_vector,[22,19]);
+ output = output';
+
+ teste(i) = isequal(packages(2:end,:), output);
 end
+
+
+
+
+
+
+
+
+
+
+
+% while(keep_feeding)
+%     if index > size(channel)
+%         keep_feeding = 0;
+%         break;
+%     end
+%     half_bit = channel(index)/half_bit_sample_counter; %Quantas metades de um bit eu tenho em um channel(index)
+%     current_bit = ~current_bit;
+%     for i = 1:uint32(half_bit/2)
+%         Packages1(turn, turn_index) = current_bit;
+%         turn_index = turn_index + 1;
+%         if turn_index == N_bits-1 && turn ~= total_number_of_packages
+%             turn = turn + 1;
+%             turn_index = 1;
+%         elseif turn_index == N_bits-1 && turn == total_number_of_packages
+%             keep_feeding = 0;
+%             break;
+%         end
+%     end
+%     index = index + 1;
+% end
+%Packages = Packages1;
+
+
+% end
 

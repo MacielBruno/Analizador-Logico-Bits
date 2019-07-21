@@ -1,4 +1,4 @@
-function SignalCurveCellSameCurve(Signal, Nbits, idle, Tbit)
+function SignalCurveCellSameCurveTextColor(Signal, Nbits, idle, Tbit)
 
 % Vai armazenar a quantidade de Curvas que deverão ser plotadas
 numberOfCurves = size(Signal,2);
@@ -6,6 +6,10 @@ numberOfCurves = size(Signal,2);
 X = struct;
 Y = struct;
 
+textArray = java_array('java.lang.String',3);
+textArray(1) = java.lang.String('one');
+textArray(2) = java.lang.String('two');
+textArray(3) = java.lang.String('three');
 for i = 1:numberOfCurves
     [X(i).plot,Y(i).plot, X(i).indexMatrix] = XandYGeneratorSameCurve(Signal(i).channel, Nbits, idle, Tbit);
 end
@@ -56,35 +60,38 @@ for i = 1:numberOfCurves
     % resto chamado de "UM", logo, associaremos o vetor ["ZERO"; "UM"] a [4,4].
     % Faremos tal associação usando o valor .type de cada canal.
     if strcmp(Signal(i).type,'SM2Arm')
-        textArray = java_array('java.lang.String',3);
-        textArray(1) = java.lang.String('oneSM2Arm  ');
-        textArray(2) = java.lang.String('twoSM2Arm  ');
-        textArray(3) = java.lang.String('threeSM2Arm');
-        whereThisNameStarts = [10,13]; %Quantos bits cada nome engloba
-        whereNameStarts(i) = {whereThisNameStarts};
+        textArray = [];
+        textArray(1) = 'PAR ';
+        textArray(2) = 'Vcap';
+        textArray(3) = 'sinc';
+        textArray(4) = 'Vcap';
+        textArray(5) = 'T1  ';
+        textArray(6) = 'T0  ';
+        textArray(7) = 'Err1';
+        textArray(8) = 'ERR0';
+        textArray(9) = 'ACK ';
+        lengthOfEachText = [1,8,2,4,1,1,1,1,1];
+        whereNameStarts = [2,2,1]; %Quantos bits cada nome engloba
     elseif strcmp(Signal(i).type,'Arm2CC')
         textArray = java_array('java.lang.String',3);
         textArray(1) = java.lang.String('oneArm2CC  ');
         textArray(2) = java.lang.String('twoArm2CC  ');
         textArray(3) = java.lang.String('threeArm2CC');
-        whereThisNameStarts = [10,13]; %Quantos bits cada nome engloba
-        whereNameStarts(i) = {whereThisNameStarts};
+        whereNameStarts = [2,1]; %Quantos bits cada nome engloba
     elseif strcmp(Signal(i).type,'CC2Arm')
         textArray = java_array('java.lang.String',3);
         textArray(1) = java.lang.String('oneCC2Arm  ');
         textArray(2) = java.lang.String('twoCC2Arm  ');
         textArray(3) = java.lang.String('threeCC2Arm');
-        whereThisNameStarts = [10,13]; %Quantos bits cada nome engloba
-        whereNameStarts(i) = {whereThisNameStarts};
+        whereNameStarts = [2,1]; %Quantos bits cada nome engloba
     elseif strcmp(Signal(i).type,'Arm2SM')
         textArray = java_array('java.lang.String',3);
         textArray(1) = java.lang.String('oneArm2SM  ');
         textArray(2) = java.lang.String('twoArm2SM  ');
         textArray(3) = java.lang.String('threeArm2SM');
-        whereThisNameStarts = [10,13]; %Quantos bits cada nome engloba
-        whereNameStarts(i) = {whereThisNameStarts};
+        whereNameStarts = [2,1]; %Quantos bits cada nome engloba
     end
-    X(i).text = getTextCell(X(i).plot, textArray, whereThisNameStarts);
+    X(i).text = getTextCell(X(i).plot, textArray, whereNameStarts);
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Nesta região do código, iremos reunir todos os vetores Y, em uma só
@@ -97,12 +104,8 @@ for i = 1:numberOfCurves
     yText(:,i) = X(i).text;
 end
 yText = yText';
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% for i = 1:numberOfCurves
-%     [X(i).patch, Y(i).patch] = patchMatrixMaker(X(1).plot, yPlot(:,i), X(i).indexMatrix, Nbits);
-% end
 
-stairs(X(1).plot, yPlot)
+stairs(X(1).plot, yPlot);
 curvesNames = {};
 yAxis = [];
 xAxis = [];
@@ -113,11 +116,7 @@ for i = 1:numberOfCurves
     xAxis(i) = -0.125;
 end
 text(xAxis, yAxis, curvesNames, 'Units', 'Normalized', 'fontsize', 10);
-hold on
-patch([0 0 X(1).plot(size(X(1).plot,2)) X(1).plot(size(X(1).plot,2))], [0 4 4 0], 'green')
-patch([0 0 X(1).plot(size(X(1).plot,2)) X(1).plot(size(X(1).plot,2))], [4 5 5 4], 'blue')
-stairs(X(1).plot, yPlot)
-hold off
+
 h = zoom;
 set(h,'Motion','horizontal','Enable','on');
 datacursormode on;

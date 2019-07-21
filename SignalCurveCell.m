@@ -1,4 +1,4 @@
-function SignalCurve(Signal, Nbits, idle, Tbit)
+function SignalCurveCell(Signal, Nbits, idle, Tbit)
 
 % Vai armazenar a quantidade de Curvas que deverão ser plotadas
 numberOfCurves = size(Signal,2);
@@ -60,7 +60,7 @@ for i = 1:numberOfCurves
 %     ylabel('Difference', 'position',[x y z])
     if i <= size(colors)
         stairs(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, 'Color', colors(i,:));
-        text(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, char(X((numberOfCurves+1)-i).text),'FontSize',5,'Rotation', -90);
+        text(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, char(X((numberOfCurves+1)-i).text),'FontSize',3,'Rotation', -90);
     else
         cor = rand(1,3);
         stairs(X((numberOfCurves+1)-i).plot, Y((numberOfCurves+1)-i).plot, 'Color', cor);

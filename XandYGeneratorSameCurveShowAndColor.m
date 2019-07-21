@@ -1,4 +1,4 @@
-function [X,Y,indexMatrix] = XandYGeneratorSameCurve(file, Nbits, idle, Tbit)
+function [X,Y,indexMatrix, colors, text] = XandYGeneratorSameCurveShowAndColor(file, Nbits, idle, Tbit,type)
 % Esta função irá gerar os valores no eixo X e Y, isto é, o tempo que
 % ocorre cada bit e seu respectivo valor, a partir de um canal gerado por
 % um analizador lógico, tais valores gerados irão ser plotados pela função
@@ -7,7 +7,7 @@ function [X,Y,indexMatrix] = XandYGeneratorSameCurve(file, Nbits, idle, Tbit)
 % A partir do canal, tomamos os pacotes de bits e então transformamos em um
 % vetor, o qual iremos, plotar e pegamos os pontos no tempo em que cada
 % pacote se inicia.
-[workingChannelwithIdle, packagesTimeWithIdle] = GetPackagesAndTime(file, 0, 24000000, Nbits, idle,  1/(4.8e6), Nbits);
+[workingChannelwithIdle, packagesTimeWithIdle] = GetPackagesAndTime(file, 0, 24000000, Nbits, idle,  Tbit, Nbits);
 % packagesTime apresenta quando começa cada pacote, i.e., o tempo de
 % início de cada vetor de um conjunto de bits espaçados em 23, porém
 % queremos o valor de tempo que mostra o início de cada bit do pacote, para
@@ -28,6 +28,8 @@ numberOfBitsBeforeFullPackage = ceil(bitTimeVectorWithIdle(1)/Tbit);
 % bits retirados;
 
 [workingChannelWithNoIdle, bitTimeMatrixWithNoIdle, indexMatrix] = getRidOfIdles(workingChannelwithIdle,bitTimeVectorWithIdle, Nbits, 0);
+workingChannelWithNoIdle = workingChannelWithNoIdle;
+[colors,text]=typeIdentifier(workingChannelWithNoIdle,type);
 workingChannel = workingChannelwithIdle;
 bitTimeMatrix = bitTimeVectorWithIdle;
 
